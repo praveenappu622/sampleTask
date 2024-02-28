@@ -1,0 +1,14 @@
+To update profile with photo = http://127.0.0.1:8000/api/profiles/2/
+To add and view profiles = http://127.0.0.1:8000/api/profiles/
+To add Posts = http://127.0.0.1:8000/api/posts/
+To view and delete post = http://127.0.0.1:8000/api/posts/1
+To post command = http://127.0.0.1:8000/api/posts/1/commands/create/
+To delete command = http://127.0.0.1:8000/api/posts/1/commands/6/
+To view posts and command = http://127.0.0.1:8000/api/posts/1/commands/
+To view category = http://127.0.0.1:8000/api/categories/
+To view subcategory = http://127.0.0.1:8000/api/categories/1/subcategories/
+To generate sentence = http://127.0.0.1:8000/api/sentence-generator/
+
+
+
+

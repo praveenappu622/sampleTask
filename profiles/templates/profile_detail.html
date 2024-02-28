@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ object.name }}</title>
+</head>
+<body>
+    <h1>{{ object.name }}</h1>
+    <p>Email: {{ object.email }}</p>
+    <p>Profile Picture: <img src="{{ object.profile_picture.url }}" alt="Profile Picture"></p>
+    <a href="{% url 'profile-list-create' %}">Back to Profiles</a>
+</body>
+</html>

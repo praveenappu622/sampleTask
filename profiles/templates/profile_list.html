@@ -1,0 +1,31 @@
+<!-- profiles/templates/profile_list.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Profiles</title>
+</head>
+<body>
+    <h1>User Profiles</h1>
+    <ul>
+        {% for profile in object_list %}
+            <li>
+                <a href="{% url 'profile-retrieve-update-destroy' profile.id %}">{{ profile.name }}</a>
+                <form method="post" action="{% url 'upload-profile-picture' profile.id %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="file" name="profile_picture" accept="image/*">
+                    <button type="submit">Upload Profile Picture</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <script>
+      const socket = new WebSocket('ws://' + window.location.host + '/ws/sentence/');
+
+socket.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    alert(data.sentence);
+};
+    </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Real-time Sentence</title>
+</head>
+<body>
+    <h1>Real-time Sentence:</h1>
+    <p id="sentence"></p>
+    <p id="connection-status"></p>
+
+    <script>
+      const socket = new WebSocket('ws://' + window.location.host + '/ws/sentence/');
+
+        socket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            document.getElementById('sentence').innerText = data.sentence;
+        };
+
+        socket.onopen = function(event) {
+            document.getElementById('connection-status').innerText = 'WebSocket Connected';
+        };
+
+        socket.onclose = function(event) {
+            console.log('WebSocket disconnected');
+            document.getElementById('connection-status').innerText = 'WebSocket Disconnected';
+        };
+    </script>
+</body>
+</html>
+
+

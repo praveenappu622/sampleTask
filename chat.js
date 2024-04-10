@@ -1,6 +1,14 @@
-
 var style = document.createElement('style');
 style.innerHTML = `
+
+*{
+    margin: 0;
+    padding: 0;
+    outline: 0;
+    box-sizing: border-box;
+    font-family: 'Mulish', sans-serif;
+  }
+
   .chatbot_icon {
     height: 100px;
     width: 100px;
@@ -15,6 +23,11 @@ style.innerHTML = `
     cursor: pointer;
     transition: all 1s;
     animation: moving 1s ease-in-out infinite alternate;
+  }
+
+  .chatbot_icon img{
+    height:140px;
+    width:100px;
   }
 
   @keyframes moving {
@@ -154,6 +167,18 @@ style.innerHTML = `
     align-items: center;
     gap: 10px;
   }
+
+  .loader_hide {
+
+    margin-right: 5px;
+    display: none;
+
+  }
+
+  .loader_show{
+    display: block;
+  }
+
 `;
 
 // Append styles to head
@@ -167,8 +192,7 @@ chatbotIcon.classList.add('chatbot_icon');
 
 var img = document.createElement('img');
 img.src = "https://i.ibb.co/KW77m7n/robo1.png";
-img.height = "70%";
-img.width = "70%";
+
 
 chatbotIcon.appendChild(img);
 
@@ -195,6 +219,10 @@ chatBody.classList.add('chat-body');
 
 var chatMessagesDiv = document.createElement('div');
 chatMessagesDiv.classList.add('chat-messages');
+
+var chatBotTextLoader = document.createElement('p');
+chatBotTextLoader.textContent = "Chitti the Bot is typing...";
+chatBotTextLoader.classList.add('loader loader_hide');
 
 var inputContainer = document.createElement('div');
 inputContainer.classList.add('input-container');
@@ -240,6 +268,7 @@ const chat_container = document.querySelector('.chat-container');
 const chat_container_close = document.querySelector('.chat-header img');
 
 const chatBot_icon = document.querySelector('.chatbot_icon');
+const chatBotTextBox = document.querySelector('.loader');
 
 
 
@@ -247,8 +276,6 @@ const chatBot_icon = document.querySelector('.chatbot_icon');
 const responses = [
   'Hello! How can I assist you today?',
   'I\'m an AI chatbot designed to help you with your queries.',
-  'Unfortunately, I don\'t have enough information to answer your question.',
-  'Thank you for your message. I\'ll forward your query to a human representative.'
 ];
 
 
@@ -340,16 +367,89 @@ function getRandomResponse() {
   return responses[Math.floor(Math.random() * responses.length)];
 }
 
-// Event listener for sending a message
-sendButton.addEventListener('click', () => {
-  const message = chatInput.value.trim();
-  if (message) {
-    displayMessage(message, 'user');
-    const response = getRandomResponse();
-    displayMessage(response, 'chitti_the_bot');
-    chatInput.value = '';
-  }
-});
-
 // Display the initial greeting from the chatbot
 displayMessage(getRandomResponse(), 'chitti_the_bot');
+
+// Event listener for sending a message
+sendButton.addEventListener('click', async () => {
+    let isParamsEmpty = false;
+    let emptyParams ="";
+
+    const message = chatInput.value.trim();
+
+    if (message) {
+      displayMessage(message, 'user');
+  
+      chatBotTextBox.classList.remove('loader_hide');
+      chatBotTextBox.classList.add('loader_show');
+    
+      let params = JSON.parse(localStorage.getItem("params"));
+  
+      if (params) {
+        let keys = Object.keys(params);
+        keys.forEach(key => {
+          if (params[key] === "") {
+            isParamsEmpty= true;
+            emptyParams = key
+            return;
+          }
+        });
+      }
+  
+      if(isParamsEmpty == true){
+  
+        console.log(`${emptyParams} value is empty or null`);
+  
+      }else{
+  
+        let apiResponse = await SendQuery(message, params);
+  
+          if (apiResponse.Success) {
+            let formattedText = apiResponse.Success.replace(/\\n/g, "<br>");
+            displayMessage(formattedText, 'chitti_the_bot');
+          } else {
+            console.log("Error while fetching response!", apiResponse);
+          }
+  
+      }
+  
+      chatBotTextBox.classList.remove('loader_show');
+      chatBotTextBox.classList.add('loader_hide'); // Hide loader after response received
+      chatInput.value = '';
+    }
+  });
+
+  async function SendQuery(message,params) {
+
+    console.log("mesaaaage =>",message)
+  
+    return  await fetch("http://192.168.1.4:4500/chatQuery", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+  
+        "apiKey":"hV6R1XxhbzaBoiL2LAthifEb+5Imq+Hwjj1V/Pvi6Hf+oxl3YSei4bdagB+ExMtmTM1XcqR2mPlTkdEtNHsjG87S4/4EOMLO8cGwK4/L3qs=",
+        "userQuery":message,
+        "requestedType":"PLUGIN",
+        "userId": "1234",
+        "params":params
+      
+      })
+    })
+    .then(response => response.json())
+      .then(result => {
+  
+        console.log("Response Query", result);
+        return result
+  
+      })
+      .catch(error => {
+        // Handle any errors that occur during the fetch
+        console.error('Error fetching data:', error);
+      })
+  
+      
+  }
+  

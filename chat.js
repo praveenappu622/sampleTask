@@ -222,7 +222,8 @@ chatMessagesDiv.classList.add('chat-messages');
 
 var chatBotTextLoader = document.createElement('p');
 chatBotTextLoader.textContent = "Chitti the Bot is typing...";
-chatBotTextLoader.classList.add('loader loader_hide');
+chatBotTextLoader.classList.add('loader');
+chatBotTextLoader.classList.add('loader_hide');
 
 var inputContainer = document.createElement('div');
 inputContainer.classList.add('input-container');
